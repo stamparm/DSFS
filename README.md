@@ -12,7 +12,7 @@ Usage: dsfs.py [options]
 Options:
   --version          show program's version number and exit
   -h, --help         show this help message and exit
-  -u URL, --url=URL  Target URL (e.g. "http://www.target.com/page.htm?id=1")
+  -u URL, --url=URL  Target URL (e.g. "http://www.target.com/page.php?id=1")
   --data=DATA        POST data (e.g. "query=test")
   --cookie=COOKIE    HTTP Cookie header value
   --user-agent=UA    HTTP User-Agent header value
@@ -22,9 +22,15 @@ Options:
 ```
 
 ```
-$ python dsfs.py -u ....
+$ python dsfs.py -u "http://debiandev/lfi.php?file="
+Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1a
+ by: Miroslav Stampar (@stamparm)
 
-scan results: possible vulnerabilities found
+* scanning GET parameter 'file'
+ (i) GET parameter 'file' could be FI vulnerable
+ (i) GET parameter 'file' appears to be (R)FI vulnerable (e.g.: 'http://debiandev/lfi.php?file=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2Fpages%2Fconfig.php')
+  (!) content seems to be dynamically evaluated
+ (i) GET parameter 'file' appears to be (L)FI vulnerable (e.g.: 'http://debiandev/lfi.php?file=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
 ```
 
 p.s. Python v2.6 or v2.7 is required for running this program
