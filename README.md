@@ -22,15 +22,16 @@ Options:
 ```
 
 ```
-$ python dsfs.py -u "http://debiandev/lfi.php?file="
+$ python dsfs.py -u "http://fidemo.cu.cc/fi.php?f=README.txt"
 Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1a
  by: Miroslav Stampar (@stamparm)
 
-* scanning GET parameter 'file'
- (i) GET parameter 'file' could be FI vulnerable
- (i) GET parameter 'file' appears to be (R)FI vulnerable (e.g.: 'http://debiandev/lfi.php?file=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2Fpages%2Fconfig.php')
+* scanning GET parameter 'f'
+ (i) GET parameter 'f' appears to be (R)FI vulnerable (e.g.: 'http://fidemo.cu.cc/fi.php?f=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2Fpages%2Fconfig.php')
   (!) content seems to be dynamically evaluated
- (i) GET parameter 'file' appears to be (L)FI vulnerable (e.g.: 'http://debiandev/lfi.php?file=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
+ (i) GET parameter 'f' appears to be (L)FI vulnerable (e.g.: 'http://fidemo.cu.cc/fi.php?f=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
+
+scan results: possible vulnerabilities found
 ```
 
 p.s. Python v2.6 or v2.7 is required for running this program
