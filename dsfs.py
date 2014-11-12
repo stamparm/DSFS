@@ -40,10 +40,6 @@ def _retrieve_content(url, data=None, method=None):
         retval = ex.read() if hasattr(ex, "read") else getattr(ex, "msg", str())
     return retval or ""
 
-def _contains(content, chars):
-    content = re.sub(r"\\[%s]" % re.escape("".join(chars)), "", content) if chars else content
-    return all(char in content for char in chars)
-
 def scan_page(url, data=None):
     retval, usable = False, False
     _retrieve_content(url, method=ERROR_LOG_METHOD)             # dummy errorneous request
