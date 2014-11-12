@@ -12,7 +12,7 @@ COOKIE, UA, REFERER = "Cookie", "User-Agent", "Referer"                         
 GET, POST = "GET", "POST"                                                                                   # enumerator-like values used for marking current phase
 TIMEOUT = 30                                                                                                # connection timeout in seconds
 
-ERROR_REGEX = r"(?i)(Fatal error|Warning)(</b>)?:\s+(require|include)(_once)?\(\)"
+ERROR_REGEX = r"(?i)(Fatal error|Warning)(</b>)?:\s+(require|include)(_once)?\(\)"                          # regular expression used for detection of vulnerability specific PHP error messages
 
 FI_TESTS = (                                                                                                # each (test) item consists of ("filepath", "content recognition regex", (combining "prefixes"), (combining "suffixes"), 'inclusion type')
     ("", r"\[[^\]]+\]\s+\[(warn|notice|error)\]\s+\[client", ("/xampp/apache/logs/", "/apache/logs/", "/wamp/apache2/logs/", "/wamp/logs/", "/program files/wamp/apache2/logs/", "/program files/apache group/apache/logs/", "/var/log/apache2"), ("error.log", "error.log%00"), 'L'),
@@ -45,8 +45,8 @@ def _contains(content, chars):
     return all(char in content for char in chars)
 
 def scan_page(url, data=None):
-    _retrieve_content(url, method=ERROR_LOG_METHOD)
     retval, usable = False, False
+    _retrieve_content(url, method=ERROR_LOG_METHOD)             # dummy errorneous request
     try:
         for phase in (GET, POST):
             current = url if phase is GET else (data or "")
