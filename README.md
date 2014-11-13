@@ -4,7 +4,7 @@ As of optional settings it supports HTTP proxy together with HTTP header values 
 
 ```
 $ python dsfs.py -h
-Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1a
+Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1b
  by: Miroslav Stampar (@stamparm)
 
 Usage: dsfs.py [options]
@@ -23,13 +23,20 @@ Options:
 
 ```
 $ python dsfs.py -u "http://fidemo.cu.cc/fi.php?f=README.txt"
-Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1a
+Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1b
  by: Miroslav Stampar (@stamparm)
 
 * scanning GET parameter 'f'
- (i) GET parameter 'f' appears to be (R)FI vulnerable (e.g.: 'http://fidemo.cu.cc/fi.php?f=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2Fpages%2Fconfig.php')
+ (i) GET parameter 'f' appears to be (R)FI vulnerable (e.g.: 'http://fidemo.cu.c
+c/fi.php?f=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2F
+files%2Fconfig.php')
   (!) content seems to be dynamically evaluated
- (i) GET parameter 'f' appears to be (L)FI vulnerable (e.g.: 'http://fidemo.cu.cc/fi.php?f=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
+ (i) GET parameter 'f' appears to be (L)FI vulnerable (e.g.: 'http://fidemo.cu.c
+c/fi.php?f=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
+ (i) GET parameter 'f' appears to be (S)FI vulnerable (e.g.: 'http://fidemo.cu.c
+c/fi.php?f=data%3A%2F%2Ftext%2Fplain%3Bbase64%2CPD9waHAgZWNobyBiYXNlNjRfZGVjb2Rl
+KCdUR1ZuWVd3Z1pHbHpZMnhoYVcxbGNqbz0nKTs%2FPg%3D%3D')
+  (!) content seems to be dynamically evaluated
 
 scan results: possible vulnerabilities found
 ```
