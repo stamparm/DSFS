@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import itertools, optparse, random, re, urllib, urllib2
 
-NAME    = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)"
-VERSION = "0.1d"
-AUTHOR  = "Miroslav Stampar (@stamparm)"
-LICENSE = "Public domain (FREE)"
+NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.1d", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
 
 DYNAMIC_CONTENT_VALUE = "Legal disclaimer:"                                                                 # string value to search if the content is dynamically evaluated
 DYNAMIC_CONTENT = "<?php echo base64_decode('%s');?>" % DYNAMIC_CONTENT_VALUE.encode("base64").strip()      # used dynamic content
