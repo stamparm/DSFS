@@ -2,7 +2,7 @@
 
 **Damn Small FI Scanner** (DSFS) is a fully functional [File inclusion](https://en.wikipedia.org/wiki/File_inclusion_vulnerability) vulnerability scanner (supporting GET and POST parameters) written in under 100 lines of code.
 
-![Vulnerable](https://i.imgur.com/WQR4x3B.png)
+![Vulnerable](https://i.imgur.com/pgYS6cW.png)
 
 As of optional settings it supports HTTP proxy together with HTTP header values "User-Agent", "Referer" and "Cookie".
 
