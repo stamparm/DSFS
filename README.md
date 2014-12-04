@@ -5,7 +5,7 @@ Damn Small FI Scanner
 
 ![Vulnerable](https://i.imgur.com/pgYS6cW.png)
 
-As of optional settings it supports HTTP proxy together with HTTP header values "User-Agent", "Referer" and "Cookie".
+As of optional settings it supports HTTP proxy together with HTTP header values `User-Agent`, `Referer` and `Cookie`.
 
 Sample runs
 ----
