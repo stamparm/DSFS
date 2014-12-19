@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import itertools, optparse, random, re, urllib, urllib2
 
-NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.1d", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
+NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.1e", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
 
 DYNAMIC_CONTENT_VALUE = "Legal disclaimer:"                                                                 # string value to search if the content is dynamically evaluated
 DYNAMIC_CONTENT = "<?php echo base64_decode('%s');?>" % DYNAMIC_CONTENT_VALUE.encode("base64").strip()      # used dynamic content
@@ -45,7 +45,7 @@ def scan_page(url, data=None):
     try:
         for phase in (GET, POST):
             current = url if phase is GET else (data or "")
-            for match in re.finditer(r"((\A|[?&])(?P<parameter>[\w\[\]]+)=)(?P<value>[^&]*)", current):
+            for match in re.finditer(r"((\A|[?&])(?P<parameter>[\w\[\]]+)=)(?P<value>[^&#]*)", current):
                 warned, found, usable = False, False, True
                 print "* scanning %s parameter '%s'" % (phase, match.group("parameter"))
                 for filepath, regex, prefixes, suffixes, inc_type in FI_TESTS:
