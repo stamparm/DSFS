@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 import itertools, optparse, random, re, urllib, urllib2
 
 NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.1e", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
