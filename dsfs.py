@@ -1,10 +1,12 @@
 #!/usr/bin/env python2
-import itertools, optparse, random, re, urllib, urllib2
+import base64, distutils.version, glob, itertools, hashlib, json, optparse, os, random, re, tempfile, urllib, urllib.parse, urllib.request  # Python 3 required
 
-NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.1e", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
+NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.2a", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
+
+def _b64(value): return base64.b64encode(value.encode("utf8") if hasattr(value, "encode") else value).decode("utf8")
 
 DYNAMIC_CONTENT_VALUE = "Legal disclaimer:"                                                                 # string value to search if the content is dynamically evaluated
-DYNAMIC_CONTENT = "<?php echo base64_decode('%s');?>" % DYNAMIC_CONTENT_VALUE.encode("base64").strip()      # used dynamic content
+DYNAMIC_CONTENT = "<?php echo base64_decode('%s');?>" % _b64(DYNAMIC_CONTENT_VALUE)                         # used dynamic content
 COOKIE, UA, REFERER = "Cookie", "User-Agent", "Referer"                                                     # optional HTTP header names
 GET, POST = "GET", "POST"                                                                                   # enumerator-like values used for marking current phase
 TIMEOUT = 30                                                                                                # connection timeout in seconds
@@ -17,7 +19,7 @@ FI_TESTS = (                                                                    
     ("", "<\?php", ("/var/www/", "../../", "../", ""), ("index", "index.php", "index.php%00"), 'L'),
     ("/etc/shells", "valid login shells", ("../../../../../../..", ""), ("", "%00"), 'L'),
     ("/windows/win.ini", "for 16-bit app support", ("../../../../../../..", ""), ("", "%00"), 'L'),
-    ("data://text/plain;base64,%s" % DYNAMIC_CONTENT.encode("base64").strip(), ("<?php echo base64_decode\(|%s" % DYNAMIC_CONTENT_VALUE), ("", ), ("", ), 'S'),
+    ("data://text/plain;base64,%s" % _b64(DYNAMIC_CONTENT), ("<?php echo base64_decode\(|%s" % DYNAMIC_CONTENT_VALUE), ("", ), ("", ), 'S'),
 )
 
 USER_AGENTS = (                                                                                             # items used for picking random HTTP User-Agent header value
@@ -32,12 +34,12 @@ _headers = {}                                                                   
 
 def _retrieve_content(url, data=None, method=None):
     try:
-        req = urllib2.Request("".join(url[i].replace(' ', "%20") if i > url.find('?') else url[i] for i in xrange(len(url))), data, _headers)
+        req = urllib.request.Request("".join(url[i].replace(' ', "%20") if i > url.find('?') else url[i] for i in range(len(url))), data.encode("utf8", "ignore") if data else None, _headers)
         req.get_method = lambda: method or (POST if data else GET)
-        retval = urllib2.urlopen(req, timeout=TIMEOUT).read()
-    except Exception, ex:
-        retval = ex.read() if hasattr(ex, "read") else getattr(ex, "msg", str())
-    return retval or ""
+        retval = urllib.request.urlopen(req, timeout=TIMEOUT).read()
+    except Exception as ex:
+        retval = ex.read() if hasattr(ex, "read") else str(ex.args[-1])
+    return (retval.decode("utf8", "ignore") if hasattr(retval, "decode") else "") or ""
 
 def scan_page(url, data=None):
     retval, usable = False, False
@@ -47,33 +49,33 @@ def scan_page(url, data=None):
             current = url if phase is GET else (data or "")
             for match in re.finditer(r"((\A|[?&])(?P<parameter>[\w\[\]]+)=)(?P<value>[^&#]*)", current):
                 warned, found, usable = False, False, True
-                print "* scanning %s parameter '%s'" % (phase, match.group("parameter"))
+                print("* scanning %s parameter '%s'" % (phase, match.group("parameter")))
                 for filepath, regex, prefixes, suffixes, inc_type in FI_TESTS:
                     for prefix, suffix in itertools.product(prefixes, suffixes):
-                        tampered = current.replace(match.group(0), "%s%s" % (match.group(1), urllib.quote("%s%s%s" % (prefix, filepath, suffix), safe='%')))
+                        tampered = current.replace(match.group(0), "%s%s" % (match.group(1), urllib.parse.quote("%s%s%s" % (prefix, filepath, suffix), safe='%')))
                         content = (_retrieve_content(tampered, data) if phase is GET else _retrieve_content(url, tampered))
                         if re.search(regex, content):
-                            print " (i) %s parameter '%s' appears to be (%s)FI vulnerable (e.g.: '%s')" % (phase, match.group("parameter"), inc_type, tampered)
+                            print(" (i) %s parameter '%s' appears to be (%s)FI vulnerable (e.g.: '%s')" % (phase, match.group("parameter"), inc_type, tampered))
                             if DYNAMIC_CONTENT_VALUE in content:
-                                print "  (!) content seems to be dynamically evaluated"
+                                print("  (!) content seems to be dynamically evaluated")
                             found = retval = True
                             break
                         if not found and not warned and re.search(ERROR_REGEX, content, re.I):
-                            print " (i) %s parameter '%s' could be FI vulnerable" % (phase, match.group("parameter"))
+                            print(" (i) %s parameter '%s' could be FI vulnerable" % (phase, match.group("parameter")))
                             warned = True
         if not usable:
-            print " (x) no usable GET/POST parameters found"
+            print(" (x) no usable GET/POST parameters found")
     except KeyboardInterrupt:
-        print "\r (x) Ctrl-C pressed"
+        print("\r (x) Ctrl-C pressed")
     return retval
 
 def init_options(proxy=None, cookie=None, ua=None, referer=None):
     global _headers
     _headers = dict(filter(lambda _: _[1], ((COOKIE, cookie), (UA, ua or NAME), (REFERER, referer))))
-    urllib2.install_opener(urllib2.build_opener(urllib2.ProxyHandler({'http': proxy})) if proxy else None)
+    urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler({'http': proxy})) if proxy else None)
 
 if __name__ == "__main__":
-    print "%s #v%s\n by: %s\n" % (NAME, VERSION, AUTHOR)
+    print("%s #v%s\n by: %s\n" % (NAME, VERSION, AUTHOR))
     parser = optparse.OptionParser(version=VERSION)
     parser.add_option("-u", "--url", dest="url", help="Target URL (e.g. \"http://www.target.com/page.php?id=1\")")
     parser.add_option("--data", dest="data", help="POST data (e.g. \"query=test\")")
@@ -86,6 +88,6 @@ if __name__ == "__main__":
     if options.url:
         init_options(options.proxy, options.cookie, options.ua if not options.randomAgent else random.choice(USER_AGENTS), options.referer)
         result = scan_page(options.url if options.url.startswith("http") else "http://%s" % options.url, options.data)
-        print "\nscan results: %s vulnerabilities found" % ("possible" if result else "no")
+        print("\nscan results: %s vulnerabilities found" % ("possible" if result else "no"))
     else:
         parser.print_help()

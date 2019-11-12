@@ -1,4 +1,4 @@
-Damn Small FI Scanner [![Python 2.6|2.7](https://img.shields.io/badge/python-2.6|2.7-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-Public_domain-red.svg)](https://wiki.creativecommons.org/wiki/Public_domain)
+Damn Small FI Scanner [![Python 3.x](https://img.shields.io/badge/python-3.x-yellow.svg)](https://www.python.org/) [![License](https://img.shields.io/badge/license-Public_domain-red.svg)](https://wiki.creativecommons.org/wiki/Public_domain)
 =========
 
 **Damn Small FI Scanner** (DSFS) is a fully functional [File inclusion](https://en.wikipedia.org/wiki/File_inclusion_vulnerability) vulnerability scanner (supporting GET and POST parameters) written in under 100 lines of code.
@@ -12,7 +12,7 @@ Sample runs
 
 ```
 $ python dsfs.py -h
-Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1b
+Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.2a
  by: Miroslav Stampar (@stamparm)
 
 Usage: dsfs.py [options]
@@ -30,25 +30,17 @@ Options:
 ```
 
 ```
-$ python dsfs.py -u "http://fidemo.cu.cc/fi.php?f=README.txt"
-Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.1b
+$ python dsfs.py -u http://testphp.vulnweb.com/showimage.php?file=./pictures/2.jpg
+Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code) #v0.2a
  by: Miroslav Stampar (@stamparm)
 
-* scanning GET parameter 'f'
- (i) GET parameter 'f' appears to be (R)FI vulnerable (e.g.: 'http://fidemo.cu.c
-c/fi.php?f=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2F
-files%2Fconfig.php')
-  (!) content seems to be dynamically evaluated
- (i) GET parameter 'f' appears to be (L)FI vulnerable (e.g.: 'http://fidemo.cu.c
-c/fi.php?f=..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fshells')
- (i) GET parameter 'f' appears to be (S)FI vulnerable (e.g.: 'http://fidemo.cu.c
-c/fi.php?f=data%3A%2F%2Ftext%2Fplain%3Bbase64%2CPD9waHAgZWNobyBiYXNlNjRfZGVjb2Rl
-KCdUR1ZuWVd3Z1pHbHpZMnhoYVcxbGNqbz0nKTs%2FPg%3D%3D')
-  (!) content seems to be dynamically evaluated
+* scanning GET parameter 'file'
+ (i) GET parameter 'file' appears to be (R)FI vulnerable (e.g.: 'http://testphp.vulnweb.com/showimage.php?file=https%3A%2F%2Fraw.githubusercontent.com%2Fstamparm%2FDSFS%2Fmaster%2Ffiles%2Fconfig.php')
+ (i) GET parameter 'file' appears to be (S)FI vulnerable (e.g.: 'http://testphp.vulnweb.com/showimage.php?file=data%3A%2F%2Ftext%2Fplain%3Bbase64%2CPD9waHAgZWNobyBiYXNlNjRfZGVjb2RlKCdUR1ZuWVd3Z1pHbHpZMnhoYVcxbGNqbz0nKTs%2FPg%3D%3D')
 
 scan results: possible vulnerabilities found
 ```
 
 Requirements
 ----
-[Python](http://www.python.org/download/) version **2.6.x** or **2.7.x** is required for running this program.
+[Python](http://www.python.org/download/) version **3.x** is required for running this program.
