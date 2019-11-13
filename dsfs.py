@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 import base64, itertools, optparse, random, re, urllib, urllib.parse, urllib.request  # Python 3 required
 
 NAME, VERSION, AUTHOR, LICENSE = "Damn Small FI Scanner (DSFS) < 100 LoC (Lines of Code)", "0.2a", "Miroslav Stampar (@stamparm)", "Public domain (FREE)"
